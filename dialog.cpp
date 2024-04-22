@@ -15,6 +15,11 @@
 
 #include <QList>
 #include <QDebug>
+#include <QDir>
+
+
+
+#include <QStringList>
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// . 
@@ -181,5 +186,97 @@ QList<int> indices={};
         qDebug() << "Could not open file for writing.";
     }  
 ///  
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// \brief Dialog::on_pushButton_4_clicked
+///.
+/// 
+void deleteFilesByIndices(const QString &indicesFile, const QString &filesFile) {
+    QFile indices(indicesFile);
+    if (!indices.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        return;
+    }
+
+    QTextStream in(&indices);
+    QStringList indicesList = in.readAll().split('\n', QString::SplitBehavior::SkipEmptyParts);
+    indicesList.removeDuplicates();
+
+    QFile files(filesFile);
+    if (!files.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        return;
+    }
+
+    QTextStream filesIn(&files);
+    QStringList filesList = filesIn.readAll().split('\n', QString::SplitBehavior::SkipEmptyParts);
+    filesList.removeDuplicates();
+
+    for (const QString &index : indicesList) {
+        int idx = index.toInt();
+        if (idx >= 0 && idx < filesList.size()) {
+            QFile::remove(filesList[idx]);
+        }
+    }
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// . 
+/// 
+ void getStringsByIndices(const QString &indicesFile, const QString &stringsFile) {
+    QFile indices(indicesFile);
+    if (!indices.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        return;
+    }
+
+    QTextStream in(&indices);
+    QStringList indicesList = in.readAll().split('\n', QString::SplitBehavior::SkipEmptyParts);
+
+    QFile strings(stringsFile);
+    if (!strings.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        return;
+    }
+
+    QTextStream stringsIn(&strings);
+    QStringList stringsList = stringsIn.readAll().split('\n', QString::SplitBehavior::SkipEmptyParts);
+
+    for (const QString &index : indicesList) {
+        int idx = index.toInt();
+        QString full_path;
+        if (idx >= 0 && idx < stringsList.size()) {
+            QString str = stringsList[idx];
+            // Do something with the string
+            qDebug() << "String with index" << idx << "is" << str;
+            full_path="/home/viktor/my_projects_qt_2/kartinki_iz_shriftov/papka-fonts-sort/obrez_snizu/polniy_obrez/black-white/"
+            +
+            str;
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    QFile file(full_path);
+
+    if (file.exists()) {
+        if (file.remove()) {
+            qDebug() << "File deleted successfully.";
+        } else {
+            qDebug() << "Failed to delete the file.";
+        }
+    } else {
+        qDebug() << "File does not exist.";
+    }
+///             
+        }
+    }
+}
+///
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// / 
+void Dialog::on_pushButton_4_clicked()
+{
+//#include <QFile>
+//#include <QTextStream>
+//#include <QStringList>
+getStringsByIndices("/home/viktor/my_projects_qt_2/kartinki_iz_shriftov/papka-fonts-sort/obrez_snizu/polniy_obrez/black-white/список индексов площадей больше 201.txt",
+ "/home/viktor/my_projects_qt_2/kartinki_iz_shriftov/papka-fonts-sort/obrez_snizu/polniy_obrez/black-white/spisok.txt");
+
+
 }
 
